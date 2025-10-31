@@ -1,25 +1,85 @@
 ﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "系統錯誤 - 個人部落格";
+    Layout = "_Layout";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="text-center">
+                <!-- 錯誤圖示 -->
+                <div class="mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi bi-exclamation-triangle text-warning" viewBox="0 0 16 16">
+                        <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+                        <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+                    </svg>
+                </div>
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+                <!-- 錯誤標題 -->
+                <h1 class="display-4 mb-3">糟糕！出現錯誤了</h1>
+                <p class="lead text-muted mb-4">
+                    很抱歉，處理您的請求時發生了錯誤。我們的技術團隊已經收到通知，會盡快修復此問題。
+                </p>
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+                @if (Model.ShowRequestId)
+                {
+                    <div class="alert alert-light border mb-4" role="alert">
+                        <small class="text-muted">
+                            <strong>請求編號：</strong>
+                            <code class="text-dark">@Model.RequestId</code>
+                        </small>
+                        <br>
+                        <small class="text-muted">如需協助，請提供此編號給管理員</small>
+                    </div>
+                }
+
+                <!-- 操作按鈕 -->
+                <div class="mt-4">
+                    <a href="/" class="btn btn-primary btn-lg me-2">
+                        <i class="bi bi-house-door"></i> 返回首頁
+                    </a>
+                    <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-arrow-left"></i> 返回上一頁
+                    </button>
+                </div>
+
+                <!-- 常見解決方案 -->
+                <div class="mt-5 text-start">
+                    <h5 class="mb-3">您可以嘗試：</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            重新整理頁面
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            檢查網址是否正確
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            稍後再試一次
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <a href="/">瀏覽最新文章</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 錯誤頁面樣式 */
+    .bi {
+        vertical-align: middle;
+    }
+
+    code {
+        padding: 2px 6px;
+        background-color: #f8f9fa;
+        border-radius: 3px;
+    }
+</style>

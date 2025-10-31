@@ -112,10 +112,36 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
     options.MultipartBodyLengthLimit = 5 * 1024 * 1024; // 5 MB
 });
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+// T118: 加入全域 Anti-Forgery Token 自動驗證
+builder.Services.AddControllersWithViews(options =>
+{
+    // 自動驗證所有 POST/PUT/DELETE/PATCH 請求的 Anti-Forgery Token
+    options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
+});
+
+// T111: 加入健康檢查端點
+builder.Services.AddHealthChecks()
+    .AddNpgSql(connectionString, name: "PostgreSQL Database", tags: new[] { "database", "postgresql" });
+
+// T116: 加入 Response Compression 優化效能
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true; // 啟用 HTTPS 壓縮
+    options.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes.Concat(new[]
+    {
+        "application/json",
+        "text/css",
+        "text/html",
+        "application/javascript",
+        "text/plain",
+        "image/svg+xml"
+    });
+});
 
 var app = builder.Build();
+
+// T116: 啟用 Response Compression (必須在其他middleware之前)
+app.UseResponseCompression();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -126,9 +152,22 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+// T117: 設定靜態檔案快取 (30天)
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        // 設定快取 30 天
+        const int durationInSeconds = 60 * 60 * 24 * 30; // 30 days
+        ctx.Context.Response.Headers.Append("Cache-Control", $"public,max-age={durationInSeconds}");
+    }
+});
 
 app.UseRouting();
+
+// T113: 處理 404 狀態碼，重新執行到 NotFound 頁面
+app.UseStatusCodePagesWithReExecute("/Error/NotFound", "?statusCode={0}");
 
 // 啟用身份驗證 (必須在 UseAuthorization 之前)
 app.UseAuthentication();
@@ -163,6 +202,9 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// T111: 對應健康檢查端點
+app.MapHealthChecks("/health");
 
 app.Run();
 

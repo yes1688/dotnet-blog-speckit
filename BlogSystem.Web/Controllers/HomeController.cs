@@ -1,6 +1,9 @@
 using BlogSystem.Core.Interfaces;
+using BlogSystem.Web.Models;
 using BlogSystem.Web.ViewModels;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,12 +55,27 @@ namespace BlogSystem.Web.Controllers
         }
 
         /// <summary>
-        /// 錯誤頁面
+        /// 錯誤頁面 (T114: 全域錯誤處理)
         /// </summary>
         [HttpGet]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View();
+            // 從 HttpContext.Items 中取得 RequestId (由中介軟體設定)
+            var requestId = HttpContext.Items["RequestId"] as string;
+
+            // 如果沒有從中介軟體取得，則使用 Activity 或 TraceIdentifier
+            if (string.IsNullOrEmpty(requestId))
+            {
+                requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            }
+
+            var errorViewModel = new ErrorViewModel
+            {
+                RequestId = requestId
+            };
+
+            return View(errorViewModel);
         }
     }
 }

@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "找不到頁面 - 個人部落格";
+    Layout = "_Layout";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="text-center">
+                <!-- 404 圖示 -->
+                <div class="mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi bi-search text-primary" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </div>
+
+                <!-- 404 標題 -->
+                <h1 class="display-1 fw-bold text-primary mb-3">404</h1>
+                <h2 class="display-6 mb-3">找不到頁面</h2>
+                <p class="lead text-muted mb-4">
+                    很抱歉，您所訪問的頁面不存在或已被移除。
+                </p>
+
+                <!-- 操作按鈕 -->
+                <div class="mt-4">
+                    <a href="/" class="btn btn-primary btn-lg me-2">
+                        <i class="bi bi-house-door"></i> 返回首頁
+                    </a>
+                    <a href="/Search" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-search"></i> 搜尋文章
+                    </a>
+                </div>
+
+                <!-- 常見連結 -->
+                <div class="mt-5">
+                    <h5 class="mb-3">您可能想要：</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-file-earmark-text fs-2 text-primary mb-2"></i>
+                                    <h6 class="card-title">
+                                        <a href="/" class="stretched-link text-decoration-none">
+                                            瀏覽最新文章
+                                        </a>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-folder fs-2 text-success mb-2"></i>
+                                    <h6 class="card-title">
+                                        <a href="/#categories" class="stretched-link text-decoration-none">
+                                            查看文章分類
+                                        </a>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-tags fs-2 text-warning mb-2"></i>
+                                    <h6 class="card-title">
+                                        <a href="/#tags" class="stretched-link text-decoration-none">
+                                            瀏覽標籤
+                                        </a>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 提示訊息 -->
+                <div class="mt-5">
+                    <p class="text-muted">
+                        <small>
+                            如果您認為這是一個錯誤，請
+                            <a href="/">回到首頁</a>
+                            或使用搜尋功能尋找您需要的內容。
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 404 頁面樣式 */
+    .bi {
+        vertical-align: middle;
+    }
+
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>

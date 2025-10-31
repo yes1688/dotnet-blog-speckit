@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 資料庫服務
+  db:
+    image: postgres:16-alpine
+    container_name: blogsystem-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: blogsystem
+      POSTGRES_USER: bloguser
+      POSTGRES_PASSWORD: blogpass123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bloguser -d blogsystem"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - blog-network
+
+  # ASP.NET Core 應用程式
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blogsystem-web
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=db;Database=blogsystem;Username=bloguser;Password=blogpass123
+      - AdminEmails=admin@example.com
+      - Google__ClientId=${GOOGLE_CLIENT_ID}
+      - Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - blog-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  blog-network:
+    driver: bridge
