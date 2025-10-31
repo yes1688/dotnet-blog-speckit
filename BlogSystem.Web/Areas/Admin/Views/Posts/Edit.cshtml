@@ -1,0 +1,124 @@
+@model BlogSystem.Web.Areas.Admin.ViewModels.PostEditViewModel
+
+@{
+    ViewData["Title"] = "編輯文章";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>編輯文章</h2>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">標題</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Slug" class="form-label">Slug</label>
+                    <input asp-for="Slug" class="form-control" />
+                    <span asp-validation-for="Slug" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Summary" class="form-label">摘要</label>
+                    <textarea asp-for="Summary" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Summary" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Content" class="form-label">內容 (Markdown)</label>
+                    <textarea asp-for="Content" class="form-control" rows="20"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">分類</label>
+                    <select asp-for="CategoryId" class="form-select">
+                        <option value="">-- 請選擇分類 (選填) --</option>
+                        @* Categories will be populated by the controller *@
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Tags" class="form-label">標籤</label>
+                    <input asp-for="Tags" class="form-control" placeholder="逗號分隔，例如：ASP.NET, C#, Web開發" />
+                    <span asp-validation-for="Tags" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CoverImageUrl" class="form-label">封面圖片 URL</label>
+                    <input asp-for="CoverImageUrl" class="form-control" />
+                    <span asp-validation-for="CoverImageUrl" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">狀態</label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="0">Draft (草稿)</option>
+                        <option value="1">Published (已發布)</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">更新文章</button>
+                    <a asp-action="Index" class="btn btn-secondary">取消</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>文章統計</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-5">建立時間：</dt>
+                        <dd class="col-sm-7">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+
+                        <dt class="col-sm-5">最後更新：</dt>
+                        <dd class="col-sm-7">@Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+
+                        <dt class="col-sm-5">瀏覽次數：</dt>
+                        <dd class="col-sm-7">@Model.ViewCount</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // 初始化 Markdown 編輯器
+        const easyMDE = new EasyMDE({
+            element: document.getElementById('Content'),
+            spellChecker: false,
+            placeholder: '請使用 Markdown 格式撰寫文章內容...',
+            status: ['lines', 'words', 'cursor'],
+            toolbar: [
+                'bold', 'italic', 'heading', '|',
+                'quote', 'unordered-list', 'ordered-list', '|',
+                'link', 'image', 'code', 'table', '|',
+                'preview', 'side-by-side', 'fullscreen', '|',
+                'guide'
+            ]
+        });
+    </script>
+}

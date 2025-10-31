@@ -31,5 +31,23 @@ namespace BlogSystem.Core.Interfaces
         /// 增加文章瀏覽次數
         /// </summary>
         Task IncrementViewCountAsync(Guid postId);
+
+        /// <summary>
+        /// 根據標題生成唯一的 slug
+        /// </summary>
+        /// <param name="title">文章標題</param>
+        /// <param name="publishDate">發布日期（用於生成路徑前綴）</param>
+        /// <returns>唯一的 slug（格式：year/month/title-slug）</returns>
+        Task<string> GenerateSlugAsync(string title, DateTime? publishDate = null);
+
+        /// <summary>
+        /// 發布文章（將狀態從 Draft 改為 Published）
+        /// </summary>
+        Task PublishPostAsync(Guid postId);
+
+        /// <summary>
+        /// 取消發布文章（將狀態從 Published 改為 Draft）
+        /// </summary>
+        Task UnpublishPostAsync(Guid postId);
     }
 }

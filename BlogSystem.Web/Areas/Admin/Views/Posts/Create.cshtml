@@ -1,0 +1,126 @@
+@model BlogSystem.Web.Areas.Admin.ViewModels.PostCreateViewModel
+
+@{
+    ViewData["Title"] = "新增文章";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">新增文章</h2>
+
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">基本資訊</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">標題 <span class="text-danger">*</span></label>
+                        <input asp-for="Title" class="form-control" placeholder="請輸入文章標題" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Slug" class="form-label">URL Slug</label>
+                        <input asp-for="Slug" class="form-control" placeholder="留空則自動從標題生成" />
+                        <div class="form-text">留空時系統將自動生成 URL-friendly 的 slug</div>
+                        <span asp-validation-for="Slug" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Summary" class="form-label">摘要 <span class="text-danger">*</span></label>
+                        <textarea asp-for="Summary" class="form-control" rows="3" placeholder="請輸入文章摘要"></textarea>
+                        <span asp-validation-for="Summary" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Content" class="form-label">內容 (Markdown) <span class="text-danger">*</span></label>
+                        <textarea asp-for="Content" class="form-control" rows="20" placeholder="請使用 Markdown 格式撰寫文章內容"></textarea>
+                        <div class="form-text">支援 Markdown 語法</div>
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">分類與標籤</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="CategoryId" class="form-label">分類</label>
+                        <select asp-for="CategoryId" class="form-select">
+                            <option value="">-- 請選擇分類 --</option>
+                            <!-- 分類選項將在後端實作時動態載入 -->
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Tags" class="form-label">標籤</label>
+                        <input asp-for="Tags" class="form-control" placeholder="請輸入標籤，以逗號分隔，例如：ASP.NET Core, C#, 教學" />
+                        <div class="form-text">多個標籤請用逗號分隔</div>
+                        <span asp-validation-for="Tags" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">進階設定</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="CoverImageUrl" class="form-label">封面圖片 URL</label>
+                        <input asp-for="CoverImageUrl" class="form-control" placeholder="請輸入圖片網址" />
+                        <div class="form-text">可選：提供封面圖片的完整 URL</div>
+                        <span asp-validation-for="CoverImageUrl" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check">
+                        <input asp-for="IsPublished" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsPublished" class="form-check-label">
+                            立即發布
+                        </label>
+                        <div class="form-text">取消勾選則儲存為草稿</div>
+                        <span asp-validation-for="IsPublished" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mb-4">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> 取消
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> 儲存文章
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // 初始化 Markdown 編輯器
+        const easyMDE = new EasyMDE({
+            element: document.getElementById('Content'),
+            spellChecker: false,
+            placeholder: '請使用 Markdown 格式撰寫文章內容...',
+            status: ['lines', 'words', 'cursor'],
+            toolbar: [
+                'bold', 'italic', 'heading', '|',
+                'quote', 'unordered-list', 'ordered-list', '|',
+                'link', 'image', 'code', 'table', '|',
+                'preview', 'side-by-side', 'fullscreen', '|',
+                'guide'
+            ]
+        });
+    </script>
+}

@@ -32,11 +32,14 @@ builder.Services.AddScoped<IAuthService>(sp =>
     return new AuthService(repository, adminEmails);
 });
 
+// T079: 註冊 ImageService
+builder.Services.AddScoped<IImageService, ImageService>();
+
 // T052: 配置 Cookie Authentication (有效期 7 天)
-builder.Services.AddAuthentication(options =>
+var authBuilder = builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "Cookies";
-    options.DefaultChallengeScheme = "Google";
+    options.DefaultChallengeScheme = "Cookies";  // 使用 Cookies 作為預設 Challenge
 })
 .AddCookie("Cookies", options =>
 {
@@ -44,16 +47,20 @@ builder.Services.AddAuthentication(options =>
     options.AccessDeniedPath = "/Admin/Auth/AccessDenied";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
-})
-// T051: 配置 Google OAuth 2.0
-.AddGoogle("Google", options =>
-{
-    options.ClientId = builder.Configuration["Google:ClientId"]
-        ?? throw new InvalidOperationException("Google ClientId not configured.");
-    options.ClientSecret = builder.Configuration["Google:ClientSecret"]
-        ?? throw new InvalidOperationException("Google ClientSecret not configured.");
-    options.CallbackPath = "/Admin/Auth/GoogleCallback";
 });
+
+// T051: 配置 Google OAuth 2.0 (可選)
+var googleClientId = builder.Configuration["Google:ClientId"];
+var googleClientSecret = builder.Configuration["Google:ClientSecret"];
+if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret))
+{
+    authBuilder.AddGoogle("Google", options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = googleClientSecret;
+        options.CallbackPath = "/Admin/Auth/GoogleCallback";
+    });
+}
 
 // T053: 建立自訂 Authorization Policy "AdminOnly"
 builder.Services.AddAuthorization(options =>
@@ -92,6 +99,12 @@ builder.Services.AddSingleton(markdownPipeline);
 // T043: 配置 URL 編碼支援中文字元
 builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 
+// T077: 配置檔案上傳限制 (5MB)
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 5 * 1024 * 1024; // 5 MB
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -115,6 +128,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // T043: 配置支援中文 URL slug 的路由
+
+// Admin Area 路由 (必須在其他路由之前)
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+
 // 文章詳細頁路由: /{year}/{month}/{slug}
 app.MapControllerRoute(
     name: "post",

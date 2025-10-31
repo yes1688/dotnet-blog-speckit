@@ -32,6 +32,11 @@ namespace BlogSystem.Core.Entities
         public string? Summary { get; set; }
 
         /// <summary>
+        /// 封面圖片 URL
+        /// </summary>
+        public string? CoverImageUrl { get; set; }
+
+        /// <summary>
         /// 發布日期時間 (UTC)
         /// </summary>
         public DateTime? PublishedAt { get; set; }

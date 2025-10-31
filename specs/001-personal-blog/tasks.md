@@ -110,25 +110,25 @@
 
 ### 測試 for User Story 2 (TDD)
 
-- [ ] T046 [P] [US2] 建立整合測試 BlogSystem.Tests/Integration/Areas/Admin/AuthControllerTests.cs
-- [ ] T047 [P] [US2] 建立單元測試 BlogSystem.Tests/Unit/Services/AuthServiceTests.cs
+- [X] T046 [P] [US2] 建立整合測試 BlogSystem.Tests/Integration/Areas/Admin/AuthControllerTests.cs
+- [X] T047 [P] [US2] 建立單元測試 BlogSystem.Tests/Unit/Services/AuthServiceTests.cs
 
 ### 實作 for User Story 2
 
-- [ ] T048 [P] [US2] 建立 BlogSystem.Core/Interfaces/IAuthService.cs 介面
-- [ ] T049 [US2] 建立 BlogSystem.Core/Services/AuthService.cs 服務 (email 授權檢查)
-- [ ] T050 [US2] 安裝 Microsoft.AspNetCore.Authentication.Google NuGet 套件
-- [ ] T051 [US2] 配置 Google OAuth 2.0 在 BlogSystem.Web/Program.cs
-- [ ] T052 [US2] 配置 Cookie Authentication 在 Program.cs (有效期 7 天)
-- [ ] T053 [US2] 建立自訂 Authorization Policy "AdminOnly" 在 Program.cs
-- [ ] T054 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Controllers/AuthController.cs
-- [ ] T055 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Views/Auth/Login.cshtml 登入頁
-- [ ] T056 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Views/Auth/AccessDenied.cshtml 無權限頁
-- [ ] T057 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Controllers/DashboardController.cs 後台首頁
-- [ ] T058 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Views/Dashboard/Index.cshtml 儀表板
-- [ ] T059 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Views/Shared/_AdminLayout.cshtml 後台版面
-- [ ] T060 [US2] 實作 AdminLog 記錄功能在 AuthController (登入/登出)
-- [ ] T061 [US2] 註冊 AuthService 在 BlogSystem.Web/Program.cs
+- [X] T048 [P] [US2] 建立 BlogSystem.Core/Interfaces/IAuthService.cs 介面
+- [X] T049 [US2] 建立 BlogSystem.Core/Services/AuthService.cs 服務 (email 授權檢查)
+- [X] T050 [US2] 安裝 Microsoft.AspNetCore.Authentication.Google NuGet 套件
+- [X] T051 [US2] 配置 Google OAuth 2.0 在 BlogSystem.Web/Program.cs
+- [X] T052 [US2] 配置 Cookie Authentication 在 Program.cs (有效期 7 天)
+- [X] T053 [US2] 建立自訂 Authorization Policy "AdminOnly" 在 Program.cs
+- [X] T054 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Controllers/AuthController.cs
+- [X] T055 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Views/Auth/Login.cshtml 登入頁
+- [X] T056 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Views/Auth/AccessDenied.cshtml 無權限頁
+- [X] T057 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Controllers/DashboardController.cs 後台首頁
+- [X] T058 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Views/Dashboard/Index.cshtml 儀表板
+- [X] T059 [P] [US2] 建立 BlogSystem.Web/Areas/Admin/Views/Shared/_AdminLayout.cshtml 後台版面
+- [X] T060 [US2] 實作 AdminLog 記錄功能在 AuthController (登入/登出)
+- [X] T061 [US2] 註冊 AuthService 在 BlogSystem.Web/Program.cs
 
 **Checkpoint**: User Stories 1 和 2 現在都可獨立運作
 
@@ -142,27 +142,27 @@
 
 ### 測試 for User Story 3 (TDD)
 
-- [ ] T062 [P] [US3] 建立整合測試 BlogSystem.Tests/Integration/Areas/Admin/PostsControllerTests.cs
-- [ ] T063 [P] [US3] 建立單元測試 BlogSystem.Tests/Unit/Services/ImageServiceTests.cs
+- [X] T062 [P] [US3] 建立整合測試 BlogSystem.Tests/Integration/Areas/Admin/PostsControllerTests.cs
+- [X] T063 [P] [US3] 建立單元測試 BlogSystem.Tests/Unit/Services/ImageServiceTests.cs
 
 ### 實作 for User Story 3
 
-- [ ] T064 [P] [US3] 建立 BlogSystem.Core/Interfaces/IImageService.cs 介面
-- [ ] T065 [US3] 建立 BlogSystem.Core/Services/ImageService.cs 服務 (圖片上傳處理)
-- [ ] T066 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/ViewModels/PostCreateViewModel.cs
-- [ ] T067 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/ViewModels/PostEditViewModel.cs
-- [ ] T068 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/ViewModels/PostListViewModel.cs
-- [ ] T069 [US3] 建立 BlogSystem.Web/Areas/Admin/Controllers/PostsController.cs
-- [ ] T070 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/Views/Posts/Index.cshtml 文章列表
-- [ ] T071 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/Views/Posts/Create.cshtml 新增表單
-- [ ] T072 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/Views/Posts/Edit.cshtml 編輯表單
-- [ ] T073 [US3] 建立 BlogSystem.Web/Areas/Admin/Controllers/UploadController.cs (AJAX 圖片上傳)
-- [ ] T074 [US3] 實作 Slug 產生邏輯在 BlogPostService (支援中文,衝突處理)
-- [ ] T075 [US3] 實作草稿/發布狀態切換邏輯在 BlogPostService
-- [ ] T076 [P] [US3] 整合 Markdown 編輯器 (如 SimpleMDE) 到 Create/Edit 視圖
-- [ ] T077 [US3] 配置檔案上傳限制 (5MB) 在 Program.cs FormOptions
-- [ ] T078 [US3] 建立 wwwroot/uploads 目錄並配置 volume 掛載在 podman-compose.yml
-- [ ] T079 [US3] 註冊 ImageService 在 BlogSystem.Web/Program.cs
+- [X] T064 [P] [US3] 建立 BlogSystem.Core/Interfaces/IImageService.cs 介面
+- [X] T065 [US3] 建立 BlogSystem.Core/Services/ImageService.cs 服務 (圖片上傳處理)
+- [X] T066 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/ViewModels/PostCreateViewModel.cs
+- [X] T067 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/ViewModels/PostEditViewModel.cs
+- [X] T068 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/ViewModels/PostListViewModel.cs
+- [X] T069 [US3] 建立 BlogSystem.Web/Areas/Admin/Controllers/PostsController.cs
+- [X] T070 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/Views/Posts/Index.cshtml 文章列表
+- [X] T071 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/Views/Posts/Create.cshtml 新增表單
+- [X] T072 [P] [US3] 建立 BlogSystem.Web/Areas/Admin/Views/Posts/Edit.cshtml 編輯表單
+- [X] T073 [US3] 建立 BlogSystem.Web/Areas/Admin/Controllers/UploadController.cs (AJAX 圖片上傳)
+- [X] T074 [US3] 實作 Slug 產生邏輯在 BlogPostService (支援中文,衝突處理)
+- [X] T075 [US3] 實作草稿/發布狀態切換邏輯在 BlogPostService
+- [X] T076 [P] [US3] 整合 Markdown 編輯器 (EasyMDE) 到 Create/Edit 視圖
+- [X] T077 [US3] 配置檔案上傳限制 (5MB) 在 Program.cs FormOptions
+- [X] T078 [US3] 建立 wwwroot/uploads 目錄並配置 volume 掛載在 podman-compose.yml
+- [X] T079 [US3] 註冊 ImageService 在 BlogSystem.Web/Program.cs
 
 **Checkpoint**: User Stories 1, 2, 3 現在都可獨立運作
 

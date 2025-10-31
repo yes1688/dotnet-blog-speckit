@@ -4,6 +4,8 @@ using BlogSystem.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BlogSystem.Core.Services
@@ -72,6 +74,125 @@ namespace BlogSystem.Core.Services
                 post.ViewCount++;
                 await _postRepository.UpdateAsync(post);
             }
+        }
+
+        /// <summary>
+        /// 根據標題生成唯一的 slug
+        /// </summary>
+        public async Task<string> GenerateSlugAsync(string title, DateTime? publishDate = null)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                throw new ArgumentException("標題不能為空", nameof(title));
+            }
+
+            // 使用當前時間或指定的發布時間
+            var date = publishDate ?? DateTime.UtcNow;
+            var year = date.Year;
+            var month = date.Month;
+
+            // 生成 slug（支援中文）
+            var baseSlug = SlugifyTitle(title);
+            var fullSlug = $"{year}/{month:D2}/{baseSlug}";
+
+            // 檢查是否存在衝突
+            var allPosts = await _postRepository.GetAllAsync();
+            var existingSlugs = allPosts.Select(p => p.Slug).ToList();
+
+            if (!existingSlugs.Contains(fullSlug))
+            {
+                return fullSlug;
+            }
+
+            // 處理衝突 - 添加數字後綴
+            var counter = 2;
+            while (existingSlugs.Contains($"{year}/{month:D2}/{baseSlug}-{counter}"))
+            {
+                counter++;
+            }
+
+            return $"{year}/{month:D2}/{baseSlug}-{counter}";
+        }
+
+        /// <summary>
+        /// 發布文章
+        /// </summary>
+        public async Task PublishPostAsync(Guid postId)
+        {
+            var post = await _postRepository.GetByIdAsync(postId);
+            if (post == null)
+            {
+                throw new InvalidOperationException($"找不到 ID 為 {postId} 的文章");
+            }
+
+            if (post.Status == PostStatus.Published)
+            {
+                return; // 已經是發布狀態
+            }
+
+            post.Status = PostStatus.Published;
+            post.PublishedAt = DateTime.UtcNow;
+
+            await _postRepository.UpdateAsync(post);
+        }
+
+        /// <summary>
+        /// 取消發布文章
+        /// </summary>
+        public async Task UnpublishPostAsync(Guid postId)
+        {
+            var post = await _postRepository.GetByIdAsync(postId);
+            if (post == null)
+            {
+                throw new InvalidOperationException($"找不到 ID 為 {postId} 的文章");
+            }
+
+            if (post.Status == PostStatus.Draft)
+            {
+                return; // 已經是草稿狀態
+            }
+
+            post.Status = PostStatus.Draft;
+            // PublishedAt 保持不變，保留歷史記錄
+
+            await _postRepository.UpdateAsync(post);
+        }
+
+        /// <summary>
+        /// 將標題轉換為 URL 友好的 slug（支援中文）
+        /// </summary>
+        private string SlugifyTitle(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                return "untitled";
+            }
+
+            // 移除前後空白
+            var slug = title.Trim();
+
+            // 轉換為小寫（僅影響英文字元）
+            slug = slug.ToLowerInvariant();
+
+            // 替換空白字元為連字號
+            slug = Regex.Replace(slug, @"\s+", "-");
+
+            // 移除特殊符號（保留中文、英文、數字、連字號）
+            slug = Regex.Replace(slug, @"[^\u4e00-\u9fa5a-z0-9\-]", "");
+
+            // 移除連續的連字號
+            slug = Regex.Replace(slug, @"-{2,}", "-");
+
+            // 移除開頭和結尾的連字號
+            slug = slug.Trim('-');
+
+            // 如果 slug 為空，使用預設值
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                slug = "untitled";
+            }
+
+            return slug;
         }
     }
 }
