@@ -12,30 +12,40 @@ namespace BlogSystem.Web.Controllers
     public class CategoryController : Controller
     {
         private readonly IBlogPostService _blogPostService;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(IBlogPostService blogPostService)
+        public CategoryController(IBlogPostService blogPostService, ICategoryService categoryService)
         {
             _blogPostService = blogPostService;
+            _categoryService = categoryService;
         }
 
         /// <summary>
         /// 分類文章列表
-        /// 根據分類 ID 顯示該分類下已發布的文章，支援分頁
+        /// 根據分類 slug 顯示該分類下已發布的文章，支援分頁
         /// </summary>
-        /// <param name="categoryId">分類 ID</param>
+        /// <param name="id">分類 slug</param>
         /// <param name="page">頁碼 (預設 1)</param>
         [HttpGet]
-        public async Task<IActionResult> Index(string categoryId, int page = 1)
+        public async Task<IActionResult> Index(string id, int page = 1)
         {
-            // 驗證 categoryId 是否為有效的 GUID
-            if (!System.Guid.TryParse(categoryId, out var parsedCategoryId))
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return NotFound();
+            }
+
+            // 根據 slug 查找分類
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            var category = categories.FirstOrDefault(c => c.Slug.Equals(id, System.StringComparison.OrdinalIgnoreCase));
+
+            if (category == null)
             {
                 return NotFound();
             }
 
             const int pageSize = 10;
 
-            var (posts, totalCount) = await _blogPostService.GetPostsByCategoryAsync(parsedCategoryId, page, pageSize);
+            var (posts, totalCount) = await _blogPostService.GetPostsByCategoryAsync(category.Id, page, pageSize);
 
             if (totalCount == 0 && page == 1)
             {
@@ -62,8 +72,9 @@ namespace BlogSystem.Web.Controllers
                 TotalCount = totalCount
             };
 
-            // 將分類 ID 傳遞給 View
-            ViewData["CategoryId"] = categoryId;
+            // 將分類資訊傳遞給 View
+            ViewData["CategoryName"] = category.Name;
+            ViewData["CategorySlug"] = category.Slug;
 
             return View(pagedResult);
         }

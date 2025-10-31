@@ -88,7 +88,7 @@ namespace BlogSystem.Web.Areas.Admin.Controllers
                         id = category.Id,
                         name = category.Name,
                         description = category.Description,
-                        createdAt = category.CreatedAt
+                        slug = category.Slug
                     }
                 });
             }

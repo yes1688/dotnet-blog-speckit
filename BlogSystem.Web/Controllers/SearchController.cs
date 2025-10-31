@@ -37,11 +37,23 @@ namespace BlogSystem.Web.Controllers
                 page = totalPages;
             }
 
+            // 轉換為 ViewModel
+            var postViewModels = posts.Select(p => new PostListViewModel
+            {
+                Title = p.Title,
+                Slug = p.Slug,
+                Summary = p.Summary ?? (p.Content.Length > 500 ? p.Content.Substring(0, 500) + "..." : p.Content),
+                PublishedAt = p.PublishedAt ?? p.CreatedAt,
+                CategoryName = p.Category?.Name,
+                Tags = p.Tags.Select(t => t.Name).ToList(),
+                ViewCount = p.ViewCount
+            }).ToList();
+
             // 建立搜尋結果 ViewModel
             var viewModel = new SearchResultViewModel
             {
                 Keyword = keyword,
-                Posts = posts,
+                Posts = postViewModels,
                 CurrentPage = page,
                 TotalPages = totalPages,
                 TotalResults = totalCount,
