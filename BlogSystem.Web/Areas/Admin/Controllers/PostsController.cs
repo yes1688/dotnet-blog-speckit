@@ -4,7 +4,9 @@ using BlogSystem.Core.Interfaces;
 using BlogSystem.Web.Areas.Admin.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,15 +23,21 @@ namespace BlogSystem.Web.Areas.Admin.Controllers
         private readonly IBlogPostService _blogPostService;
         private readonly IRepository<BlogPost> _postRepository;
         private readonly IAuthService _authService;
+        private readonly ICategoryService _categoryService;
+        private readonly ITagService _tagService;
 
         public PostsController(
             IBlogPostService blogPostService,
             IRepository<BlogPost> postRepository,
-            IAuthService authService)
+            IAuthService authService,
+            ICategoryService categoryService,
+            ITagService tagService)
         {
             _blogPostService = blogPostService;
             _postRepository = postRepository;
             _authService = authService;
+            _categoryService = categoryService;
+            _tagService = tagService;
         }
 
         /// <summary>
@@ -64,9 +72,21 @@ namespace BlogSystem.Web.Areas.Admin.Controllers
         /// 顯示新增文章表單
         /// </summary>
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View(new PostCreateViewModel());
+            try
+            {
+                // 設定分類下拉清單
+                var categories = await _categoryService.GetAllCategoriesAsync();
+                ViewBag.Categories = new SelectList(categories, "Id", "Name");
+
+                return View(new PostCreateViewModel());
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"載入分類失敗：{ex.Message}";
+                return View(new PostCreateViewModel());
+            }
         }
 
         /// <summary>
@@ -101,8 +121,45 @@ namespace BlogSystem.Web.Areas.Admin.Controllers
                     PublishedAt = model.IsPublished ? DateTime.UtcNow : null,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    ViewCount = 0
+                    ViewCount = 0,
+                    Tags = new List<Tag>()
                 };
+
+                // 處理標籤
+                if (!string.IsNullOrWhiteSpace(model.Tags))
+                {
+                    var tagNames = _tagService.ParseTagsFromString(model.Tags);
+                    foreach (var tagName in tagNames)
+                    {
+                        try
+                        {
+                            var existingTag = await _tagService.GetTagByIdAsync(Guid.Empty);
+                            // 查詢現有標籤（使用 GetAllTagsAsync 取得所有標籤並比較名稱）
+                            var allTags = await _tagService.GetAllTagsAsync();
+                            var existingTagByName = allTags.FirstOrDefault(t => t.Name == tagName);
+
+                            if (existingTagByName != null)
+                            {
+                                post.Tags.Add(existingTagByName);
+                            }
+                            else
+                            {
+                                var newTag = await _tagService.CreateTagAsync(tagName);
+                                post.Tags.Add(newTag);
+                            }
+                        }
+                        catch (ArgumentException)
+                        {
+                            // 標籤名稱重複，尋找現有的標籤
+                            var allTags = await _tagService.GetAllTagsAsync();
+                            var existingTag = allTags.FirstOrDefault(t => t.Name == tagName);
+                            if (existingTag != null && !post.Tags.Any(t => t.Id == existingTag.Id))
+                            {
+                                post.Tags.Add(existingTag);
+                            }
+                        }
+                    }
+                }
 
                 await _postRepository.AddAsync(post);
 
@@ -130,29 +187,41 @@ namespace BlogSystem.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var post = await _postRepository.GetByIdAsync(id);
-            if (post == null)
+            try
             {
-                return NotFound();
+                var post = await _postRepository.GetByIdAsync(id);
+                if (post == null)
+                {
+                    return NotFound();
+                }
+
+                // 設定分類下拉清單
+                var categories = await _categoryService.GetAllCategoriesAsync();
+                ViewBag.Categories = new SelectList(categories, "Id", "Name", post.CategoryId);
+
+                var viewModel = new PostEditViewModel
+                {
+                    Id = post.Id,
+                    Title = post.Title,
+                    Content = post.Content,
+                    Summary = post.Summary,
+                    Slug = post.Slug,
+                    CategoryId = post.CategoryId,
+                    Tags = post.Tags != null ? string.Join(", ", post.Tags.Select(t => t.Name)) : null,
+                    CoverImageUrl = post.CoverImageUrl,
+                    Status = post.Status,
+                    CreatedAt = post.CreatedAt,
+                    UpdatedAt = post.UpdatedAt,
+                    ViewCount = post.ViewCount
+                };
+
+                return View(viewModel);
             }
-
-            var viewModel = new PostEditViewModel
+            catch (Exception ex)
             {
-                Id = post.Id,
-                Title = post.Title,
-                Content = post.Content,
-                Summary = post.Summary,
-                Slug = post.Slug,
-                CategoryId = post.CategoryId,
-                Tags = post.Tags != null ? string.Join(", ", post.Tags.Select(t => t.Name)) : null,
-                CoverImageUrl = post.CoverImageUrl,
-                Status = post.Status,
-                CreatedAt = post.CreatedAt,
-                UpdatedAt = post.UpdatedAt,
-                ViewCount = post.ViewCount
-            };
-
-            return View(viewModel);
+                TempData["ErrorMessage"] = $"載入文章失敗：{ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         /// <summary>
@@ -188,6 +257,45 @@ namespace BlogSystem.Web.Areas.Admin.Controllers
                 post.CoverImageUrl = model.CoverImageUrl;
                 post.Status = model.Status;
                 post.UpdatedAt = DateTime.UtcNow;
+
+                // 處理標籤：清除舊的標籤並設定新的
+                post.Tags = new List<Tag>();
+                if (!string.IsNullOrWhiteSpace(model.Tags))
+                {
+                    var tagNames = _tagService.ParseTagsFromString(model.Tags);
+                    foreach (var tagName in tagNames)
+                    {
+                        try
+                        {
+                            // 查詢現有標籤
+                            var allTags = await _tagService.GetAllTagsAsync();
+                            var existingTagByName = allTags.FirstOrDefault(t => t.Name == tagName);
+
+                            if (existingTagByName != null)
+                            {
+                                if (!post.Tags.Any(t => t.Id == existingTagByName.Id))
+                                {
+                                    post.Tags.Add(existingTagByName);
+                                }
+                            }
+                            else
+                            {
+                                var newTag = await _tagService.CreateTagAsync(tagName);
+                                post.Tags.Add(newTag);
+                            }
+                        }
+                        catch (ArgumentException)
+                        {
+                            // 標籤名稱重複，尋找現有的標籤
+                            var allTags = await _tagService.GetAllTagsAsync();
+                            var existingTag = allTags.FirstOrDefault(t => t.Name == tagName);
+                            if (existingTag != null && !post.Tags.Any(t => t.Id == existingTag.Id))
+                            {
+                                post.Tags.Add(existingTag);
+                            }
+                        }
+                    }
+                }
 
                 await _postRepository.UpdateAsync(post);
 

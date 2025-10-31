@@ -7,20 +7,30 @@
                 <a href="/@Model.Slug" class="text-decoration-none text-dark">@Model.Title</a>
             </h5>
             <p class="card-text text-muted">@Model.Summary</p>
+
+            <!-- 分類與標籤 -->
+            <div class="mb-2">
+                @if (Model.CategoryName != null)
+                {
+                    <span class="badge bg-primary me-2">
+                        <i class="bi bi-folder"></i> @Model.CategoryName
+                    </span>
+                }
+                @if (Model.Tags != null && Model.Tags.Any())
+                {
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <span class="badge bg-secondary me-1">
+                            <i class="bi bi-tag"></i> @tag
+                        </span>
+                    }
+                }
+            </div>
+
             <div class="d-flex justify-content-between align-items-center">
                 <div class="text-muted small">
                     <span>@Model.PublishedAt.ToString("yyyy-MM-dd")</span>
-                    @if (Model.CategoryName != null)
-                    {
-                        <span class="ms-2">· @Model.CategoryName</span>
-                    }
                     <span class="ms-2">· @Model.ViewCount 次瀏覽</span>
-                </div>
-                <div>
-                    @foreach (var tag in Model.Tags.Take(3))
-                    {
-                        <span class="badge bg-light text-dark">@tag</span>
-                    }
                 </div>
             </div>
         </div>

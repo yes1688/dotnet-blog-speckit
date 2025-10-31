@@ -46,16 +46,16 @@
 
                 <div class="mb-3">
                     <label asp-for="CategoryId" class="form-label">分類</label>
-                    <select asp-for="CategoryId" class="form-select">
-                        <option value="">-- 請選擇分類 (選填) --</option>
-                        @* Categories will be populated by the controller *@
+                    <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                        <option value="">-- 請選擇分類 --</option>
                     </select>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Tags" class="form-label">標籤</label>
-                    <input asp-for="Tags" class="form-control" placeholder="逗號分隔，例如：ASP.NET, C#, Web開發" />
+                    <label asp-for="Tags" class="form-label">標籤（以逗號分隔）</label>
+                    <input asp-for="Tags" class="form-control" placeholder="例如：ASP.NET, C#, 教學" />
+                    <div class="form-text">多個標籤請用逗號分隔</div>
                     <span asp-validation-for="Tags" class="text-danger"></span>
                 </div>
 

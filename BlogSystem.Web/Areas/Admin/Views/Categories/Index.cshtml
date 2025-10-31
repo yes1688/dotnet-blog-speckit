@@ -1,0 +1,271 @@
+@model IEnumerable<BlogSystem.Core.Entities.Category>
+@{
+    ViewData["Title"] = "分類管理";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <!-- 頁面標題和操作按鈕 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h2 mb-0">@ViewData["Title"]</h1>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                    <i class="bi bi-plus-circle me-2"></i>新增分類
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顯示成功/錯誤訊息 -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- 分類列表 -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="categoriesTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>名稱</th>
+                                <th>Slug</th>
+                                <th class="text-center">文章數</th>
+                                <th>建立時間</th>
+                                <th class="text-end">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var category in Model.OrderBy(c => c.DisplayOrder).ThenBy(c => c.Name))
+                            {
+                                <tr data-category-id="@category.Id">
+                                    <td>
+                                        <span class="category-name-display">@category.Name</span>
+                                        <input type="text" class="form-control category-name-input d-none" value="@category.Name" style="display: none;">
+                                    </td>
+                                    <td>
+                                        <code class="text-muted">@category.Slug</code>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info">@category.BlogPosts?.Count ?? 0</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">@category.DisplayOrder</small>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group" role="group">
+                                            <!-- 編輯按鈕 -->
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-primary edit-btn"
+                                                    data-category-id="@category.Id"
+                                                    title="編輯">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+
+                                            <!-- 刪除按鈕 -->
+                                            <form method="post"
+                                                  action="@Url.Action("Delete", "Categories", new { area = "Admin" })"
+                                                  data-category-id="@category.Id"
+                                                  class="d-inline delete-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@category.Id" />
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        title="刪除"
+                                                        data-category-name="@category.Name"
+                                                        @(category.BlogPosts?.Any() == true ? "disabled" : "")>
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- 空狀態 -->
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-folder text-muted" style="font-size: 4rem;"></i>
+                <h4 class="mt-3 text-muted">尚無分類</h4>
+                <p class="text-muted mb-4">立即新增第一個分類吧！</p>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                    <i class="bi bi-plus-circle me-2"></i>新增分類
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- 新增/編輯分類 Modal -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createCategoryModalLabel">新增分類</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="createCategoryForm" method="post" action="@Url.Action("Create", "Categories", new { area = "Admin" })">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">分類名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="categoryName" name="name" required maxlength="50" placeholder="請輸入分類名稱">
+                        <small class="text-muted d-block mt-1">最多 50 個字元</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryDescription" class="form-label">分類描述</label>
+                        <textarea class="form-control" id="categoryDescription" name="description" rows="3" maxlength="200" placeholder="請輸入分類描述（可選）"></textarea>
+                        <small class="text-muted d-block mt-1">最多 200 個字元</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">新增</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 刪除確認對話框
+        document.querySelectorAll('.delete-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const categoryName = this.querySelector('button').dataset.categoryName;
+                const postsCount = this.closest('tr').querySelector('.badge').textContent;
+
+                // 檢查是否有關聯的文章
+                if (parseInt(postsCount) > 0) {
+                    e.preventDefault();
+                    alert(`無法刪除「${categoryName}」，因為還有 ${postsCount} 篇文章使用此分類。請先編輯這些文章的分類。`);
+                    return false;
+                }
+
+                if (!confirm(`確定要刪除分類「${categoryName}」嗎？此操作無法復原。`)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // 編輯按鈕功能
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const row = this.closest('tr');
+                const categoryId = row.dataset.categoryId;
+                const nameDisplay = row.querySelector('.category-name-display');
+                const nameInput = row.querySelector('.category-name-input');
+
+                // 切換編輯模式
+                nameDisplay.classList.toggle('d-none');
+                nameInput.classList.toggle('d-none');
+                nameInput.focus();
+                nameInput.select();
+
+                // 更改按鈕狀態
+                this.classList.toggle('btn-outline-primary');
+                this.classList.toggle('btn-outline-success');
+                this.innerHTML = this.classList.contains('btn-outline-success')
+                    ? '<i class="bi bi-check-lg"></i>'
+                    : '<i class="bi bi-pencil"></i>';
+
+                // 如果是保存狀態
+                if (this.classList.contains('btn-outline-success')) {
+                    this.dataset.action = 'save';
+
+                    // 點擊保存時提交 AJAX
+                    const originalClickHandler = this.onclick;
+                    this.onclick = null;
+
+                    this.removeEventListener('click', arguments.callee);
+                    this.addEventListener('click', function(saveEvent) {
+                        saveEvent.preventDefault();
+                        const newName = nameInput.value.trim();
+
+                        if (!newName) {
+                            alert('分類名稱不能為空');
+                            return;
+                        }
+
+                        // AJAX 提交編輯
+                        fetch(`@Url.Action("Edit", "Categories", new { area = "Admin" })`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: JSON.stringify({
+                                id: categoryId,
+                                name: newName
+                            })
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                nameDisplay.textContent = newName;
+                                nameDisplay.classList.remove('d-none');
+                                nameInput.classList.add('d-none');
+
+                                // 恢復編輯按鈕
+                                this.classList.remove('btn-outline-success');
+                                this.classList.add('btn-outline-primary');
+                                this.innerHTML = '<i class="bi bi-pencil"></i>';
+
+                                // 顯示成功訊息
+                                const alert = document.createElement('div');
+                                alert.className = 'alert alert-success alert-dismissible fade show';
+                                alert.innerHTML = '<i class="bi bi-check-circle me-2"></i>分類「' + newName + '」更新成功！<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                                document.querySelector('.container-fluid').insertBefore(alert, document.querySelector('.card'));
+
+                                // 自動關閉訊息
+                                setTimeout(() => alert.remove(), 3000);
+                            } else {
+                                alert('更新失敗，請重試');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('更新出錯');
+                        });
+                    });
+                }
+            });
+        });
+
+        // 清空新增 Modal 的表單內容
+        document.getElementById('createCategoryModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('createCategoryForm').reset();
+        });
+
+        // 表單提交時驗證
+        document.getElementById('createCategoryForm').addEventListener('submit', function(e) {
+            const categoryName = document.getElementById('categoryName').value.trim();
+            if (!categoryName) {
+                e.preventDefault();
+                alert('請輸入分類名稱');
+                return false;
+            }
+        });
+    </script>
+}

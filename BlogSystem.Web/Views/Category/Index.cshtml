@@ -1,0 +1,106 @@
+@model BlogSystem.Web.ViewModels.CategoryPostsViewModel
+@{
+    ViewData["Title"] = $"{Model.Category.Name} - 分類";
+}
+
+<div class="container">
+    <!-- 分類資訊區域 -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="category-header">
+                <h1 class="display-4 mb-3">@Model.Category.Name</h1>
+
+                @if (!string.IsNullOrEmpty(Model.Category.Description))
+                {
+                    <p class="lead text-muted">@Model.Category.Description</p>
+                }
+
+                <div class="text-muted">
+                    <span class="badge bg-secondary">@Model.TotalPosts 篇文章</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文章列表 -->
+    @if (Model.Posts.Any())
+    {
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- 文章卡片列表 -->
+                @foreach (var post in Model.Posts)
+                {
+                    <partial name="_PostCard" model="post" />
+                }
+            </div>
+        </div>
+
+        <!-- 分頁導航 -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="文章分頁" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <!-- 上一頁 -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        @if (Model.HasPreviousPage)
+                        {
+                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)" aria-label="上一頁">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link" aria-hidden="true">&laquo;</span>
+                        }
+                    </li>
+
+                    <!-- 頁碼 -->
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+
+                    <!-- 下一頁 -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        @if (Model.HasNextPage)
+                        {
+                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)" aria-label="下一頁">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link" aria-hidden="true">&raquo;</span>
+                        }
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+    else
+    {
+        <!-- 無文章提示 -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="alert alert-info text-center" role="alert">
+                    <h4 class="alert-heading mb-3">此分類暫無文章</h4>
+                    <p class="mb-0">這個分類目前還沒有發佈的文章，敬請期待新的內容！</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .category-header {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 2rem;
+    }
+
+    .category-header h1 {
+        font-weight: 700;
+        color: #212529;
+    }
+</style>

@@ -176,28 +176,28 @@
 
 ### 測試 for User Story 4 (TDD)
 
-- [ ] T080 [P] [US4] 建立整合測試 BlogSystem.Tests/Integration/Controllers/CategoryControllerTests.cs
-- [ ] T081 [P] [US4] 建立整合測試 BlogSystem.Tests/Integration/Controllers/TagControllerTests.cs
-- [ ] T082 [P] [US4] 建立單元測試 BlogSystem.Tests/Unit/Services/CategoryServiceTests.cs
-- [ ] T083 [P] [US4] 建立單元測試 BlogSystem.Tests/Unit/Services/TagServiceTests.cs
+- [X] T080 [P] [US4] 建立整合測試 BlogSystem.Tests/Integration/Controllers/CategoryControllerTests.cs
+- [X] T081 [P] [US4] 建立整合測試 BlogSystem.Tests/Integration/Controllers/TagControllerTests.cs
+- [X] T082 [P] [US4] 建立單元測試 BlogSystem.Tests/Unit/Services/CategoryServiceTests.cs
+- [X] T083 [P] [US4] 建立單元測試 BlogSystem.Tests/Unit/Services/TagServiceTests.cs
 
 ### 實作 for User Story 4
 
-- [ ] T084 [P] [US4] 建立 BlogSystem.Core/Interfaces/ICategoryService.cs 介面
-- [ ] T085 [P] [US4] 建立 BlogSystem.Core/Interfaces/ITagService.cs 介面
-- [ ] T086 [P] [US4] 建立 BlogSystem.Core/Services/CategoryService.cs 服務
-- [ ] T087 [P] [US4] 建立 BlogSystem.Core/Services/TagService.cs 服務
-- [ ] T088 [US4] 建立 BlogSystem.Web/Areas/Admin/Controllers/CategoriesController.cs
-- [ ] T089 [P] [US4] 建立 BlogSystem.Web/Areas/Admin/Views/Categories/Index.cshtml
-- [ ] T090 [P] [US4] 建立 BlogSystem.Web/Areas/Admin/Views/Categories/_CreateModal.cshtml
-- [ ] T091 [P] [US4] 建立 BlogSystem.Web/Controllers/CategoryController.cs 前台分類控制器
-- [ ] T092 [P] [US4] 建立 BlogSystem.Web/Controllers/TagController.cs 前台標籤控制器
-- [ ] T093 [P] [US4] 建立 BlogSystem.Web/Views/Category/Index.cshtml 分類文章列表
-- [ ] T094 [P] [US4] 建立 BlogSystem.Web/Views/Tag/Index.cshtml 標籤文章列表
-- [ ] T095 [US4] 更新 BlogSystem.Web/Areas/Admin/Views/Posts/Create.cshtml 加入分類標籤選擇
-- [ ] T096 [US4] 更新 BlogSystem.Web/Areas/Admin/Views/Posts/Edit.cshtml 加入分類標籤編輯
-- [ ] T097 [US4] 更新 BlogSystem.Web/Views/Shared/_PostCard.cshtml 顯示分類標籤
-- [ ] T098 [US4] 註冊 Category/Tag Services 在 BlogSystem.Web/Program.cs
+- [X] T084 [P] [US4] 建立 BlogSystem.Core/Interfaces/ICategoryService.cs 介面
+- [X] T085 [P] [US4] 建立 BlogSystem.Core/Interfaces/ITagService.cs 介面
+- [X] T086 [P] [US4] 建立 BlogSystem.Core/Services/CategoryService.cs 服務
+- [X] T087 [P] [US4] 建立 BlogSystem.Core/Services/TagService.cs 服務
+- [X] T088 [US4] 建立 BlogSystem.Web/Areas/Admin/Controllers/CategoriesController.cs
+- [X] T089 [P] [US4] 建立 BlogSystem.Web/Areas/Admin/Views/Categories/Index.cshtml
+- [X] T090 [P] [US4] 建立 BlogSystem.Web/Areas/Admin/Views/Categories/_CreateModal.cshtml
+- [X] T091 [P] [US4] 建立 BlogSystem.Web/Controllers/CategoryController.cs 前台分類控制器
+- [X] T092 [P] [US4] 建立 BlogSystem.Web/Controllers/TagController.cs 前台標籤控制器
+- [X] T093 [P] [US4] 建立 BlogSystem.Web/Views/Category/Index.cshtml 分類文章列表
+- [X] T094 [P] [US4] 建立 BlogSystem.Web/Views/Tag/Index.cshtml 標籤文章列表
+- [X] T095 [US4] 更新 BlogSystem.Web/Areas/Admin/Views/Posts/Create.cshtml 加入分類標籤選擇
+- [X] T096 [US4] 更新 BlogSystem.Web/Areas/Admin/Views/Posts/Edit.cshtml 加入分類標籤編輯
+- [X] T097 [US4] 更新 BlogSystem.Web/Views/Shared/_PostCard.cshtml 顯示分類標籤
+- [X] T098 [US4] 註冊 Category/Tag Services 在 BlogSystem.Web/Program.cs
 
 **Checkpoint**: 所有前 4 個使用者情境均可獨立運作
 

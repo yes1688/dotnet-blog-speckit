@@ -1,0 +1,91 @@
+@model BlogSystem.Web.ViewModels.TagPostsViewModel
+@{
+    ViewData["Title"] = $"#{Model.Tag.Name} - 標籤";
+}
+
+<div class="container">
+    <!-- 標籤資訊區域 -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h1 class="mb-2">
+                        <span class="badge bg-primary">#@Model.Tag.Name</span>
+                    </h1>
+                    <p class="text-muted mb-0">
+                        共 <strong>@Model.TotalPosts</strong> 篇文章
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文章列表 -->
+    @if (Model.Posts.Any())
+    {
+        <div class="row">
+            @foreach (var post in Model.Posts)
+            {
+                <partial name="_PostCard" model="post" />
+            }
+        </div>
+
+        <!-- 分頁導航 -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="標籤文章分頁" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <!-- 上一頁 -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        @if (Model.HasPreviousPage)
+                        {
+                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)" aria-label="上一頁">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">&laquo;</span>
+                        }
+                    </li>
+
+                    <!-- 頁碼 -->
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+
+                    <!-- 下一頁 -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        @if (Model.HasNextPage)
+                        {
+                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)" aria-label="下一頁">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">&raquo;</span>
+                        }
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+    else
+    {
+        <!-- 無文章提示 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    <h5 class="alert-heading">目前沒有文章</h5>
+                    <p class="mb-0">
+                        標籤 <strong>@Model.Tag.Name</strong> 下還沒有任何文章發布。請稍後再回來查看。
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

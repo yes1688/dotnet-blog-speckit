@@ -49,5 +49,24 @@ namespace BlogSystem.Core.Interfaces
         /// 取消發布文章（將狀態從 Published 改為 Draft）
         /// </summary>
         Task UnpublishPostAsync(Guid postId);
+
+        /// <summary>
+        /// 根據分類 ID 取得該分類下的已發布文章列表 (分頁)
+        /// </summary>
+        /// <param name="categoryId">分類 ID</param>
+        /// <param name="page">頁碼 (從 1 開始)</param>
+        /// <param name="pageSize">每頁筆數</param>
+        /// <returns>分頁結果，若分類不存在返回空列表</returns>
+        Task<(IEnumerable<BlogPost> Posts, int TotalCount)> GetPostsByCategoryAsync(Guid categoryId, int page = 1, int pageSize = 10);
+
+        /// <summary>
+        /// 根據標籤 ID 取得該標籤下的已發布文章列表 (分頁)
+        /// User Story 4: 訪客能夠透過標籤瀏覽相關文章
+        /// </summary>
+        /// <param name="tagId">標籤 ID</param>
+        /// <param name="page">頁碼 (從 1 開始)</param>
+        /// <param name="pageSize">每頁筆數</param>
+        /// <returns>分頁結果，若標籤不存在返回 null；若無文章返回空列表</returns>
+        Task<(IEnumerable<BlogPost> Posts, int TotalCount)?> GetPostsByTagAsync(Guid tagId, int page = 1, int pageSize = 10);
     }
 }

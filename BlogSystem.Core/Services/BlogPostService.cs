@@ -159,6 +159,66 @@ namespace BlogSystem.Core.Services
         }
 
         /// <summary>
+        /// 根據分類 ID 取得該分類下的已發布文章列表 (分頁)
+        /// </summary>
+        public async Task<(IEnumerable<BlogPost> Posts, int TotalCount)> GetPostsByCategoryAsync(Guid categoryId, int page = 1, int pageSize = 10)
+        {
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100; // 最大限制
+
+            // 根據分類 ID 和已發布狀態取得文章
+            var query = await _postRepository.FindAsync(p =>
+                p.CategoryId == categoryId &&
+                p.Status == PostStatus.Published);
+
+            var posts = query
+                .OrderByDescending(p => p.PublishedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var totalCount = query.Count();
+
+            return (posts, totalCount);
+        }
+
+        /// <summary>
+        /// 根據標籤 ID 取得該標籤下的已發布文章列表 (分頁)
+        /// User Story 4: 訪客能夠透過標籤瀏覽相關文章
+        /// </summary>
+        public async Task<(IEnumerable<BlogPost> Posts, int TotalCount)?> GetPostsByTagAsync(Guid tagId, int page = 1, int pageSize = 10)
+        {
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100; // 最大限制
+
+            // 先檢查標籤是否存在
+            var allPosts = await _postRepository.GetAllAsync();
+            var tagExists = allPosts.Any(p => p.Tags.Any(t => t.Id == tagId));
+
+            if (!tagExists)
+            {
+                return null; // 標籤不存在
+            }
+
+            // 根據標籤 ID 取得該標籤下的已發布文章（透過 Tags 多對多關聯）
+            var query = await _postRepository.FindAsync(p =>
+                p.Status == PostStatus.Published &&
+                p.Tags.Any(t => t.Id == tagId));
+
+            var posts = query
+                .OrderByDescending(p => p.PublishedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var totalCount = query.Count();
+
+            return (posts, totalCount);
+        }
+
+        /// <summary>
         /// 將標題轉換為 URL 友好的 slug（支援中文）
         /// </summary>
         private string SlugifyTitle(string title)
