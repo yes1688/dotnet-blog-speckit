@@ -147,6 +147,18 @@ app.MapControllerRoute(
     pattern: "{year:int}/{month:int}/{slug}",
     defaults: new { controller = "Post", action = "Details" });
 
+// 分類頁路由: /Category/{slug}
+app.MapControllerRoute(
+    name: "category",
+    pattern: "Category/{id}",
+    defaults: new { controller = "Category", action = "Index" });
+
+// 標籤頁路由: /Tag/{slug}
+app.MapControllerRoute(
+    name: "tag",
+    pattern: "Tag/{id}",
+    defaults: new { controller = "Tag", action = "Index" });
+
 // 預設路由
 app.MapControllerRoute(
     name: "default",

@@ -1,6 +1,7 @@
 using BlogSystem.Core.Interfaces;
 using BlogSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,11 +16,13 @@ namespace BlogSystem.Web.Controllers
     {
         private readonly IBlogPostService _blogPostService;
         private readonly ITagService _tagService;
+        private readonly ILogger<TagController> _logger;
 
-        public TagController(IBlogPostService blogPostService, ITagService tagService)
+        public TagController(IBlogPostService blogPostService, ITagService tagService, ILogger<TagController> logger)
         {
             _blogPostService = blogPostService;
             _tagService = tagService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,19 +35,28 @@ namespace BlogSystem.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string id, int page = 1)
         {
+            _logger.LogInformation("TagController.Index called with id={Id}, page={Page}", id, page);
+
             if (string.IsNullOrWhiteSpace(id))
             {
+                _logger.LogWarning("TagController.Index: id is null or whitespace");
                 return NotFound();
             }
 
             // 根據 slug 查找標籤
+            _logger.LogInformation("TagController.Index: Fetching all tags");
             var tags = await _tagService.GetAllTagsAsync();
+            _logger.LogInformation("TagController.Index: Found {Count} tags", tags.Count());
+
             var tag = tags.FirstOrDefault(t => t.Slug.Equals(id, StringComparison.OrdinalIgnoreCase));
 
             if (tag == null)
             {
+                _logger.LogWarning("TagController.Index: Tag with slug '{Slug}' not found", id);
                 return NotFound();
             }
+
+            _logger.LogInformation("TagController.Index: Found tag '{Name}' with id={TagId}", tag.Name, tag.Id);
 
             const int pageSize = 10;
 

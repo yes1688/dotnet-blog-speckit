@@ -1,6 +1,7 @@
 using BlogSystem.Core.Interfaces;
 using BlogSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,11 +14,13 @@ namespace BlogSystem.Web.Controllers
     {
         private readonly IBlogPostService _blogPostService;
         private readonly ICategoryService _categoryService;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(IBlogPostService blogPostService, ICategoryService categoryService)
+        public CategoryController(IBlogPostService blogPostService, ICategoryService categoryService, ILogger<CategoryController> logger)
         {
             _blogPostService = blogPostService;
             _categoryService = categoryService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -29,19 +32,28 @@ namespace BlogSystem.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string id, int page = 1)
         {
+            _logger.LogInformation("CategoryController.Index called with id={Id}, page={Page}", id, page);
+
             if (string.IsNullOrWhiteSpace(id))
             {
+                _logger.LogWarning("CategoryController.Index: id is null or whitespace");
                 return NotFound();
             }
 
             // 根據 slug 查找分類
+            _logger.LogInformation("CategoryController.Index: Fetching all categories");
             var categories = await _categoryService.GetAllCategoriesAsync();
+            _logger.LogInformation("CategoryController.Index: Found {Count} categories", categories.Count());
+
             var category = categories.FirstOrDefault(c => c.Slug.Equals(id, System.StringComparison.OrdinalIgnoreCase));
 
             if (category == null)
             {
+                _logger.LogWarning("CategoryController.Index: Category with slug '{Slug}' not found", id);
                 return NotFound();
             }
+
+            _logger.LogInformation("CategoryController.Index: Found category '{Name}' with id={CategoryId}", category.Name, category.Id);
 
             const int pageSize = 10;
 
