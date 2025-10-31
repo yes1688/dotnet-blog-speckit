@@ -1,0 +1,37 @@
+@model BlogSystem.Web.ViewModels.PostDetailViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<article class="container my-5">
+    <header class="mb-4">
+        <h1 class="display-4">@Model.Title</h1>
+        <div class="text-muted">
+            <small>
+                發布於 @Model.PublishedAt.ToString("yyyy年MM月dd日")
+                | 瀏覽次數: @Model.ViewCount
+                @if (Model.CategoryName != null)
+                {
+                    <span> | 分類: <a href="/category/@Model.CategorySlug">@Model.CategoryName</a></span>
+                }
+            </small>
+        </div>
+        @if (Model.Tags.Any())
+        {
+            <div class="mt-2">
+                @foreach (var tag in Model.Tags)
+                {
+                    <a href="/tag/@tag.Slug" class="badge bg-secondary text-decoration-none">@tag.Name</a>
+                }
+            </div>
+        }
+    </header>
+
+    <div class="post-content">
+        @Html.Raw(Model.ContentHtml)
+    </div>
+
+    <footer class="mt-5">
+        <a href="/" class="btn btn-outline-primary">← 返回首頁</a>
+    </footer>
+</article>

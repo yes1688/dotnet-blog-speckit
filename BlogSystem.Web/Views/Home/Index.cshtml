@@ -1,0 +1,27 @@
+@model BlogSystem.Web.ViewModels.PagedResult<BlogSystem.Web.ViewModels.PostListViewModel>
+@{
+    ViewData["Title"] = "首頁";
+}
+
+<div class="container">
+    <h1 class="my-4">部落格文章</h1>
+
+    @if (Model.Items.Any())
+    {
+        <div class="row">
+            @foreach (var post in Model.Items)
+            {
+                <partial name="_PostCard" model="post" />
+            }
+        </div>
+
+        <!-- 分頁導航 -->
+        <partial name="_Pagination" model="Model" />
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <p>目前還沒有任何文章。</p>
+        </div>
+    }
+</div>

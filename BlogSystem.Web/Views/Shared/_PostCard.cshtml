@@ -1,0 +1,28 @@
+@model BlogSystem.Web.ViewModels.PostListViewModel
+
+<div class="col-md-12 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">
+                <a href="/@Model.Slug" class="text-decoration-none text-dark">@Model.Title</a>
+            </h5>
+            <p class="card-text text-muted">@Model.Summary</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                    <span>@Model.PublishedAt.ToString("yyyy-MM-dd")</span>
+                    @if (Model.CategoryName != null)
+                    {
+                        <span class="ms-2">· @Model.CategoryName</span>
+                    }
+                    <span class="ms-2">· @Model.ViewCount 次瀏覽</span>
+                </div>
+                <div>
+                    @foreach (var tag in Model.Tags.Take(3))
+                    {
+                        <span class="badge bg-light text-dark">@tag</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

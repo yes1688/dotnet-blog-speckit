@@ -1,0 +1,30 @@
+@model BlogSystem.Web.ViewModels.PagedResult<BlogSystem.Web.ViewModels.PostListViewModel>
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="文章分頁" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- 上一頁 -->
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link" href="?page=@(Model.CurrentPage - 1)" aria-label="上一頁">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- 頁碼 -->
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="?page=@i">@i</a>
+                </li>
+            }
+
+            <!-- 下一頁 -->
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <a class="page-link" href="?page=@(Model.CurrentPage + 1)" aria-label="下一頁">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

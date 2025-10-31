@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 資料庫服務
+  postgres:
+    container_name: blog-postgres
+    image: docker.io/library/postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: blogdb
+      POSTGRES_USER: bloguser
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bloguser -d blogdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 部落格應用程式服務
+  blog-app:
+    container_name: blog-app
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # 資料庫連線設定
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=blogdb;Username=bloguser;Password=${DB_PASSWORD}"
+
+      # Google OAuth 2.0 設定
+      Google__ClientId: ${GOOGLE_CLIENT_ID}
+      Google__ClientSecret: ${GOOGLE_CLIENT_SECRET}
+
+      # 管理員 email 清單 (逗號分隔,無空格)
+      AdminEmails: ${ADMIN_EMAILS}
+
+      # ASP.NET Core 設定
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      # 圖片上傳持久化
+      - uploads-data:/app/wwwroot/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  # PostgreSQL 資料持久化
+  postgres-data:
+    driver: local
+
+  # 上傳圖片持久化
+  uploads-data:
+    driver: local

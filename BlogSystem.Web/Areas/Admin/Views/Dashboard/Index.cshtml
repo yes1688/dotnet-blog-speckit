@@ -1,0 +1,133 @@
+@{
+    ViewData["Title"] = "管理員儀表板";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-3">@ViewData["Title"]</h1>
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-person-circle me-2"></i>
+                歡迎回來，<strong>@User.Identity.Name</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- 文章管理 Card -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-file-earmark-text fs-1 text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="card-title mb-0">文章管理</h5>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted">
+                        管理所有部落格文章，包括新增、編輯、刪除和發布文章。
+                    </p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-primary w-100">
+                            <i class="bi bi-arrow-right-circle me-2"></i>進入管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分類管理 Card -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-folder fs-1 text-success"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="card-title mb-0">分類管理</h5>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted">
+                        管理文章分類，組織和分類您的部落格內容。
+                    </p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-success w-100">
+                            <i class="bi bi-arrow-right-circle me-2"></i>進入管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 標籤管理 Card -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-tags fs-1 text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="card-title mb-0">標籤管理</h5>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted">
+                        管理文章標籤，幫助讀者更容易找到相關內容。
+                    </p>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-warning w-100">
+                            <i class="bi bi-arrow-right-circle me-2"></i>進入管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Section (Placeholder for future enhancement) -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="h4 mb-3">快速統計</h3>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-text fs-2 text-primary"></i>
+                    <h4 class="mt-2">--</h4>
+                    <p class="text-muted mb-0">總文章數</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="bi bi-folder2-open fs-2 text-success"></i>
+                    <h4 class="mt-2">--</h4>
+                    <p class="text-muted mb-0">分類數量</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="bi bi-tag fs-2 text-warning"></i>
+                    <h4 class="mt-2">--</h4>
+                    <p class="text-muted mb-0">標籤數量</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="bi bi-eye fs-2 text-info"></i>
+                    <h4 class="mt-2">--</h4>
+                    <p class="text-muted mb-0">總瀏覽數</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
