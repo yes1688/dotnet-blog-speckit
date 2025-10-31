@@ -1,4 +1,5 @@
 using BlogSystem.Core.Entities;
+using BlogSystem.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -45,24 +46,21 @@ namespace BlogSystem.Infrastructure.Data
                         Id = Guid.NewGuid(),
                         Name = "技術筆記",
                         Slug = "tech",
-                        Description = "程式開發、系統架構與技術研究",
-                        CreatedAt = DateTime.UtcNow
+                        Description = "程式開發、系統架構與技術研究"
                     },
                     new Category
                     {
                         Id = Guid.NewGuid(),
                         Name = "生活隨筆",
                         Slug = "life",
-                        Description = "日常生活、旅遊與心情分享",
-                        CreatedAt = DateTime.UtcNow
+                        Description = "日常生活、旅遊與心情分享"
                     },
                     new Category
                     {
                         Id = Guid.NewGuid(),
                         Name = "學習資源",
                         Slug = "learning",
-                        Description = "書籍推薦、線上課程與學習心得",
-                        CreatedAt = DateTime.UtcNow
+                        Description = "書籍推薦、線上課程與學習心得"
                     }
                 };
 
@@ -73,14 +71,14 @@ namespace BlogSystem.Infrastructure.Data
                 // 建立標籤
                 var tags = new[]
                 {
-                    new Tag { Id = Guid.NewGuid(), Name = "ASP.NET Core", Slug = "aspnet-core", CreatedAt = DateTime.UtcNow },
-                    new Tag { Id = Guid.NewGuid(), Name = "C#", Slug = "csharp", CreatedAt = DateTime.UtcNow },
-                    new Tag { Id = Guid.NewGuid(), Name = "PostgreSQL", Slug = "postgresql", CreatedAt = DateTime.UtcNow },
-                    new Tag { Id = Guid.NewGuid(), Name = "Docker", Slug = "docker", CreatedAt = DateTime.UtcNow },
-                    new Tag { Id = Guid.NewGuid(), Name = "架構設計", Slug = "architecture", CreatedAt = DateTime.UtcNow },
-                    new Tag { Id = Guid.NewGuid(), Name = "效能優化", Slug = "performance", CreatedAt = DateTime.UtcNow },
-                    new Tag { Id = Guid.NewGuid(), Name = "閱讀", Slug = "reading", CreatedAt = DateTime.UtcNow },
-                    new Tag { Id = Guid.NewGuid(), Name = "旅行", Slug = "travel", CreatedAt = DateTime.UtcNow }
+                    new Tag { Id = Guid.NewGuid(), Name = "ASP.NET Core", Slug = "aspnet-core" },
+                    new Tag { Id = Guid.NewGuid(), Name = "C#", Slug = "csharp" },
+                    new Tag { Id = Guid.NewGuid(), Name = "PostgreSQL", Slug = "postgresql" },
+                    new Tag { Id = Guid.NewGuid(), Name = "Docker", Slug = "docker" },
+                    new Tag { Id = Guid.NewGuid(), Name = "架構設計", Slug = "architecture" },
+                    new Tag { Id = Guid.NewGuid(), Name = "效能優化", Slug = "performance" },
+                    new Tag { Id = Guid.NewGuid(), Name = "閱讀", Slug = "reading" },
+                    new Tag { Id = Guid.NewGuid(), Name = "旅行", Slug = "travel" }
                 };
 
                 await context.Tags.AddRangeAsync(tags);
