@@ -68,5 +68,15 @@ namespace BlogSystem.Core.Interfaces
         /// <param name="pageSize">每頁筆數</param>
         /// <returns>分頁結果，若標籤不存在返回 null；若無文章返回空列表</returns>
         Task<(IEnumerable<BlogPost> Posts, int TotalCount)?> GetPostsByTagAsync(Guid tagId, int page = 1, int pageSize = 10);
+
+        /// <summary>
+        /// 根據關鍵字搜尋已發布的文章 (分頁)
+        /// User Story 5: 訪客能夠透過關鍵字搜尋文章標題與內容
+        /// </summary>
+        /// <param name="keyword">搜尋關鍵字</param>
+        /// <param name="page">頁碼 (從 1 開始)</param>
+        /// <param name="pageSize">每頁筆數</param>
+        /// <returns>分頁結果，搜尋標題、內容和摘要中的關鍵字</returns>
+        Task<(IEnumerable<BlogPost> Posts, int TotalCount)> SearchPostsAsync(string? keyword, int page = 1, int pageSize = 10);
     }
 }

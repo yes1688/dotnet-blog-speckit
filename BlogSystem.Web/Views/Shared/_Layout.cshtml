@@ -21,6 +21,14 @@
                             <a class="nav-link text-dark" href="/">首頁</a>
                         </li>
                     </ul>
+                    <form class="d-flex ms-auto" asp-controller="Search" asp-action="Index" method="get">
+                        <input class="form-control me-2" type="search" name="keyword"
+                               placeholder="搜尋文章..." aria-label="Search"
+                               value="@ViewBag.Keyword">
+                        <button class="btn btn-outline-primary" type="submit">
+                            搜尋
+                        </button>
+                    </form>
                 </div>
             </div>
         </nav>

@@ -1,0 +1,218 @@
+@model BlogSystem.Web.ViewModels.SearchResultViewModel
+@{
+    ViewData["Title"] = "搜尋結果";
+}
+
+<div class="container">
+    <!-- 搜尋框區域 -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="search-header">
+                <h1 class="display-5 mb-4">搜尋文章</h1>
+
+                <form method="get" action="/Search" class="mb-4">
+                    <div class="input-group input-group-lg">
+                        <input
+                            type="text"
+                            name="keyword"
+                            class="form-control"
+                            placeholder="輸入搜尋關鍵字..."
+                            value="@Model.Keyword"
+                            aria-label="搜尋關鍵字">
+                        <button class="btn btn-primary" type="submit" id="search-btn">
+                            <i class="bi bi-search"></i> 搜尋
+                        </button>
+                    </div>
+                </form>
+
+                <!-- 搜尋結果摘要 -->
+                @if (!string.IsNullOrEmpty(Model.Keyword))
+                {
+                    <div class="search-summary">
+                        @if (Model.HasResults)
+                        {
+                            <p class="lead text-muted mb-0">
+                                找到 <strong class="text-dark">@Model.TotalResults</strong> 篇文章
+                                符合搜尋條件：<mark>@Model.Keyword</mark>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="lead text-muted mb-0">
+                                沒有找到符合「<mark>@Model.Keyword</mark>」的文章
+                            </p>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 文章列表 -->
+    @if (Model.HasResults)
+    {
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- 文章卡片列表 -->
+                @foreach (var post in Model.Posts)
+                {
+                    <partial name="_PostCard" model="post" />
+                }
+            </div>
+        </div>
+
+        <!-- 分頁導航 -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="搜尋結果分頁" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <!-- 上一頁 -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        @if (Model.HasPreviousPage)
+                        {
+                            <a class="page-link" href="?keyword=@Uri.EscapeDataString(Model.Keyword ?? "")&page=@(Model.CurrentPage - 1)" aria-label="上一頁">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link" aria-hidden="true">&laquo;</span>
+                        }
+                    </li>
+
+                    <!-- 頁碼 -->
+                    @{
+                        int startPage = Math.Max(1, Model.CurrentPage - 2);
+                        int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 2);
+                    }
+
+                    @if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?keyword=@Uri.EscapeDataString(Model.Keyword ?? "")&page=1">1</a>
+                        </li>
+                        @if (startPage > 2)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="?keyword=@Uri.EscapeDataString(Model.Keyword ?? "")&page=@i">@i</a>
+                        </li>
+                    }
+
+                    @if (endPage < Model.TotalPages)
+                    {
+                        @if (endPage < Model.TotalPages - 1)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" href="?keyword=@Uri.EscapeDataString(Model.Keyword ?? "")&page=@Model.TotalPages">@Model.TotalPages</a>
+                        </li>
+                    }
+
+                    <!-- 下一頁 -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        @if (Model.HasNextPage)
+                        {
+                            <a class="page-link" href="?keyword=@Uri.EscapeDataString(Model.Keyword ?? "")&page=@(Model.CurrentPage + 1)" aria-label="下一頁">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link" aria-hidden="true">&raquo;</span>
+                        }
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+    else
+    {
+        <!-- 空結果提示 -->
+        @if (!string.IsNullOrEmpty(Model.Keyword))
+        {
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="alert alert-info text-center" role="alert">
+                        <h4 class="alert-heading mb-3">
+                            <i class="bi bi-search"></i> 沒有找到相關文章
+                        </h4>
+                        <p class="mb-3">
+                            搜尋關鍵字「<strong>@Model.Keyword</strong>」未找到任何相符的文章。
+                        </p>
+                        <hr>
+                        <p class="mb-0 text-muted">
+                            建議：
+                        </p>
+                        <ul class="list-unstyled text-muted mt-2">
+                            <li><i class="bi bi-check-circle me-2"></i>檢查關鍵字的拼寫是否正確</li>
+                            <li><i class="bi bi-check-circle me-2"></i>嘗試使用更一般的關鍵字</li>
+                            <li><i class="bi bi-check-circle me-2"></i>嘗試使用更短的關鍵字</li>
+                            <li><i class="bi bi-check-circle me-2"></i>瀏覽<a href="/" class="link-primary">首頁</a>查看最新文章</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="alert alert-secondary text-center" role="alert">
+                        <h4 class="alert-heading mb-2">開始搜尋</h4>
+                        <p class="mb-0">請在上方搜尋框中輸入關鍵字，尋找感興趣的文章。</p>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<style>
+    .search-header {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 2rem;
+    }
+
+    .search-header h1 {
+        font-weight: 700;
+        color: #212529;
+    }
+
+    .search-summary {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+
+    .search-summary mark {
+        background-color: #fff3cd;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+    }
+
+    .input-group-lg .form-control {
+        border-color: #dee2e6;
+        font-size: 1.1rem;
+    }
+
+    .input-group-lg .btn-primary {
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .pagination {
+        margin-top: 2rem;
+    }
+</style>

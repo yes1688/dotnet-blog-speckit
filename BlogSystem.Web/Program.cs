@@ -39,6 +39,9 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITagService, TagService>();
 
+// T108: 註冊 SearchService
+builder.Services.AddScoped<ISearchService, SearchService>();
+
 // T052: 配置 Cookie Authentication (有效期 7 天)
 var authBuilder = builder.Services.AddAuthentication(options =>
 {

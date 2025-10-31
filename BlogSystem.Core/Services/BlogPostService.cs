@@ -219,6 +219,51 @@ namespace BlogSystem.Core.Services
         }
 
         /// <summary>
+        /// 根據關鍵字搜尋已發布的文章 (分頁)
+        /// User Story 5: 訪客能夠透過關鍵字搜尋文章標題與內容
+        /// </summary>
+        public async Task<(IEnumerable<BlogPost> Posts, int TotalCount)> SearchPostsAsync(string? keyword, int page = 1, int pageSize = 10)
+        {
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100; // 最大限制
+
+            // 處理關鍵字長度限制 - 截短過長的關鍵字
+            var searchKeyword = keyword?.Trim() ?? string.Empty;
+            if (searchKeyword.Length > 500)
+            {
+                searchKeyword = searchKeyword.Substring(0, 500);
+            }
+
+            // 如果關鍵字為空，返回空結果
+            if (string.IsNullOrWhiteSpace(searchKeyword))
+            {
+                return (Enumerable.Empty<BlogPost>(), 0);
+            }
+
+            // 進行大小寫不敏感的搜尋（搜尋標題、內容、摘要）
+            var searchKeywordLower = searchKeyword.ToLowerInvariant();
+
+            var query = await _postRepository.FindAsync(p =>
+                p.Status == PostStatus.Published &&
+                (
+                    p.Title.ToLower().Contains(searchKeywordLower) ||
+                    p.Content.ToLower().Contains(searchKeywordLower) ||
+                    (p.Summary != null && p.Summary.ToLower().Contains(searchKeywordLower))
+                ));
+
+            var posts = query
+                .OrderByDescending(p => p.PublishedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var totalCount = query.Count();
+
+            return (posts, totalCount);
+        }
+
+        /// <summary>
         /// 將標題轉換為 URL 友好的 slug（支援中文）
         /// </summary>
         private string SlugifyTitle(string title)

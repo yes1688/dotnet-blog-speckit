@@ -211,19 +211,19 @@
 
 ### 測試 for User Story 5 (TDD)
 
-- [ ] T099 [P] [US5] 建立整合測試 BlogSystem.Tests/Integration/Controllers/SearchControllerTests.cs
-- [ ] T100 [P] [US5] 建立單元測試 BlogSystem.Tests/Unit/Services/SearchServiceTests.cs
+- [X] T099 [P] [US5] 建立整合測試 BlogSystem.Tests/Integration/Controllers/SearchControllerTests.cs
+- [X] T100 [P] [US5] 建立單元測試 BlogSystem.Tests/Unit/Services/SearchServiceTests.cs
 
 ### 實作 for User Story 5
 
-- [ ] T101 [P] [US5] 建立 BlogSystem.Core/Interfaces/ISearchService.cs 介面
-- [ ] T102 [US5] 建立 BlogSystem.Core/Services/SearchService.cs 服務 (使用 EF.Functions.ILike)
-- [ ] T103 [P] [US5] 建立 BlogSystem.Web/ViewModels/SearchResultViewModel.cs
-- [ ] T104 [US5] 建立 BlogSystem.Web/Controllers/SearchController.cs
-- [ ] T105 [P] [US5] 建立 BlogSystem.Web/Views/Search/Index.cshtml 搜尋結果頁
-- [ ] T106 [US5] 加入搜尋框到 BlogSystem.Web/Views/Shared/_Layout.cshtml
+- [X] T101 [P] [US5] 建立 BlogSystem.Core/Interfaces/ISearchService.cs 介面
+- [X] T102 [US5] 建立 BlogSystem.Core/Services/SearchService.cs 服務 (使用 Contains 方法)
+- [X] T103 [P] [US5] 建立 BlogSystem.Web/ViewModels/SearchResultViewModel.cs
+- [X] T104 [US5] 建立 BlogSystem.Web/Controllers/SearchController.cs
+- [X] T105 [P] [US5] 建立 BlogSystem.Web/Views/Search/Index.cshtml 搜尋結果頁
+- [X] T106 [US5] 加入搜尋框到 BlogSystem.Web/Views/Shared/_Layout.cshtml
 - [ ] T107 [US5] (選用) 建立 PostgreSQL GIN 索引優化搜尋效能 (透過遷移)
-- [ ] T108 [US5] 註冊 SearchService 在 BlogSystem.Web/Program.cs
+- [X] T108 [US5] 註冊 SearchService 在 BlogSystem.Web/Program.cs
 
 **Checkpoint**: 所有使用者情境均已完成且可獨立測試
 
