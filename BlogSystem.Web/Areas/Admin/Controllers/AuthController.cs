@@ -32,23 +32,53 @@ namespace BlogSystem.Web.Areas.Admin.Controllers
         }
 
         /// <summary>
-        /// 處理 Google OAuth 回調
-        /// 目前為佔位實作，稍後將整合真正的 OAuth 流程
+        /// 發起 Google OAuth 登入流程
         /// </summary>
-        /// <returns>回調處理視圖</returns>
+        /// <returns>重定向至 Google 登入頁面</returns>
+        [HttpPost]
+        [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
+        public IActionResult GoogleLogin()
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("GoogleCallback")
+            };
+            return Challenge(properties, "Google");
+        }
+
+        /// <summary>
+        /// 處理 Google OAuth 回調
+        /// </summary>
+        /// <returns>重定向至管理後台或錯誤頁面</returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GoogleCallback()
         {
-            // TODO: 實作真正的 Google OAuth 2.0 回調處理
-            // 當實作完成後，在成功驗證時記錄登入日誌：
-            // var userEmail = User.Identity?.Name;
-            // if (!string.IsNullOrEmpty(userEmail))
-            // {
-            //     var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            //     await _authService.LogAdminActionAsync(userEmail, "Login", ipAddress);
-            // }
+            // 驗證使用者身份
+            var authenticateResult = await HttpContext.AuthenticateAsync("Google");
 
-            return View();
+            if (!authenticateResult.Succeeded)
+            {
+                return RedirectToAction("AccessDenied");
+            }
+
+            // 取得使用者 Email
+            var userEmail = authenticateResult.Principal?.Identity?.Name;
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return RedirectToAction("AccessDenied");
+            }
+
+            // 記錄登入操作
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            await _authService.LogAdminActionAsync(userEmail, "Login", ipAddress);
+
+            // 使用 Cookie 登入
+            await HttpContext.SignInAsync("Cookies", authenticateResult.Principal);
+
+            // 重定向至管理後台
+            return Redirect("/Admin/Dashboard");
         }
 
         /// <summary>

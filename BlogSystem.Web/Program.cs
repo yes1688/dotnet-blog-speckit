@@ -65,7 +65,8 @@ if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientS
     {
         options.ClientId = googleClientId;
         options.ClientSecret = googleClientSecret;
-        options.CallbackPath = "/Admin/Auth/GoogleCallback";
+        // 使用默认的 /signin-google 回调路径
+        // options.CallbackPath = "/Admin/Auth/GoogleCallback";
     });
 }
 
@@ -205,6 +206,25 @@ app.MapControllerRoute(
 
 // T111: 對應健康檢查端點
 app.MapHealthChecks("/health");
+
+// 自動執行資料庫遷移 (生產環境使用)
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<BlogDbContext>();
+        context.Database.Migrate();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogInformation("Database migration completed successfully");
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database");
+        throw;
+    }
+}
 
 app.Run();
 
